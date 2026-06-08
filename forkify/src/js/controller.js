@@ -2,6 +2,7 @@ import * as model from './model.js';
 import recipeView from './views/RecipeView.js';
 import searchView from './views/searchViews.js';
 import resultsView from './views/ResultView.js';
+import paginationView from './views/paginationView.js';
 
 const controlRecipes = async function () {
   try {
@@ -25,15 +26,22 @@ const controlSearchResults = async function () {
     resultsView.renderSpinner0();
 
     await model.loadSearchResults(query);
-    resultsView.render(model.state.search.results);
+    resultsView.render(model.getSearchResultsPage());
+    paginationView.render(model.state.search);
   } catch (err) {
     console.log(err);
   }
 };
 
+const controlPagination = function (goToPage) {
+  resultsView.render(model.getSearchResultsPage(goToPage));
+  paginationView.render(model.state.search);
+};
+
 const init = async function () {
   recipeView.addHandlerRender(controlRecipes);
   searchView.addHandlerSearch(controlSearchResults);
+  paginationView.addHandlerClick(controlPagination);
 };
 
 init();
